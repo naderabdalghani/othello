@@ -1,8 +1,10 @@
-def print_hi(name):
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import tkinter as tk
+from board import Board
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Othello")
+    root.iconbitmap("./assets/icon.ico")
+    board = Board(root, n=8)
+    board.pack(side="top", fill="both", expand=True, padx=4, pady=4)
+    root.mainloop()
