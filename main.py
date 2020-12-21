@@ -77,17 +77,29 @@ def save_game_data(root,
                    white_eval_fn,
                    black_move_ordering,
                    white_move_ordering):
-    board_size.get()
-    black_type.get()
-    white_type.get()
-    black_hints.get()
-    white_hints.get()
-    black_depth.get()
-    white_depth.get()
-    black_eval_fn.get()
-    white_eval_fn.get()
-    black_move_ordering.get()
-    white_move_ordering.get()
+    global BOARD_SIZE, \
+        BLACK_PLAYER_TYPE, \
+        WHITE_PLAYER_TYPE, \
+        BLACK_HINTS, \
+        WHITE_HINTS, \
+        BLACK_DEPTH, \
+        WHITE_DEPTH, \
+        BLACK_EVALUATION_FN, \
+        WHITE_EVALUATION_FN, \
+        BLACK_MOVE_ORDERING, \
+        WHITE_MOVE_ORDERING
+
+    BOARD_SIZE = board_size.get()
+    BLACK_PLAYER_TYPE = black_type.get()
+    WHITE_PLAYER_TYPE = white_type.get()
+    BLACK_HINTS = black_hints.get()
+    WHITE_HINTS = white_hints.get()
+    BLACK_DEPTH = black_depth.get()
+    WHITE_DEPTH = white_depth.get()
+    BLACK_EVALUATION_FN = black_eval_fn.get()
+    WHITE_EVALUATION_FN = white_eval_fn.get()
+    BLACK_MOVE_ORDERING = black_move_ordering.get()
+    WHITE_MOVE_ORDERING = white_move_ordering.get()
     root.destroy()
 
 
@@ -103,6 +115,17 @@ def reset_game_data(root,
                     white_eval_fn,
                     black_move_ordering,
                     white_move_ordering):
+    global BOARD_SIZE, \
+        BLACK_PLAYER_TYPE, \
+        WHITE_PLAYER_TYPE, \
+        BLACK_HINTS, \
+        WHITE_HINTS, \
+        BLACK_DEPTH, \
+        WHITE_DEPTH, \
+        BLACK_EVALUATION_FN, \
+        WHITE_EVALUATION_FN, \
+        BLACK_MOVE_ORDERING, \
+        WHITE_MOVE_ORDERING
     board_size.set(BOARD_SIZE)
     black_type.set(BLACK_PLAYER_TYPE)
     white_type.set(WHITE_PLAYER_TYPE)
@@ -346,6 +369,18 @@ def main():
     root.title("Othello")
     root.iconbitmap("./assets/icon.ico")
     root.geometry("400x250")
+
+    global BOARD_SIZE,\
+        BLACK_PLAYER_TYPE,\
+        WHITE_PLAYER_TYPE,\
+        BLACK_HINTS,\
+        WHITE_HINTS,\
+        BLACK_DEPTH,\
+        WHITE_DEPTH,\
+        BLACK_EVALUATION_FN,\
+        WHITE_EVALUATION_FN,\
+        BLACK_MOVE_ORDERING,\
+        WHITE_MOVE_ORDERING
 
     board_size = IntVar(value=BOARD_SIZE)
     black_type = StringVar(value=BLACK_PLAYER_TYPE)
