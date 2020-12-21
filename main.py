@@ -184,20 +184,75 @@ def display_settings_window(root,
     white_move_ord_checkbox.grid(column=1, row=16, sticky=W, ipadx=padding)
 
 
-def start_game(root):
+def start_game(root,
+               n_variable,
+               black_type,
+               white_type,
+               black_hints,
+               white_hints,
+               black_depth,
+               white_depth,
+               black_eval_fn,
+               white_eval_fn,
+               black_move_ordering,
+               white_move_ordering):
     for widget in root.winfo_children():
         widget.destroy()
     root.geometry("")
-    add_menu_widget(root)
+    add_menu_widget(root,
+                    n_variable,
+                    black_type,
+                    white_type,
+                    black_hints,
+                    white_hints,
+                    black_depth,
+                    white_depth,
+                    black_eval_fn,
+                    white_eval_fn,
+                    black_move_ordering,
+                    white_move_ordering)
     board = Board(root, n=N)
     board.pack(side="top", padx=4, pady=4)
 
 
-def add_menu_widget(root):
+def add_menu_widget(root,
+                    n_variable,
+                    black_type,
+                    white_type,
+                    black_hints,
+                    white_hints,
+                    black_depth,
+                    white_depth,
+                    black_eval_fn,
+                    white_eval_fn,
+                    black_move_ordering,
+                    white_move_ordering):
     menu_bar = Menu(root)
     game_menu = Menu(menu_bar, tearoff=0)
-    game_menu.add_command(label="New Game", command=lambda: start_game(root))
-    game_menu.add_command(label="Settings", command=lambda: display_settings_window(root))
+    game_menu.add_command(label="New Game", command=lambda: start_game(root,
+                                                                       n_variable,
+                                                                       black_type,
+                                                                       white_type,
+                                                                       black_hints,
+                                                                       white_hints,
+                                                                       black_depth,
+                                                                       white_depth,
+                                                                       black_eval_fn,
+                                                                       white_eval_fn,
+                                                                       black_move_ordering,
+                                                                       white_move_ordering))
+    game_menu.add_command(label="Settings", command=lambda: display_settings_window(root,
+                                                                                    n_variable,
+                                                                                    black_type,
+                                                                                    white_type,
+                                                                                    black_hints,
+                                                                                    white_hints,
+                                                                                    black_depth,
+                                                                                    white_depth,
+                                                                                    black_eval_fn,
+                                                                                    white_eval_fn,
+                                                                                    black_move_ordering,
+                                                                                    white_move_ordering))
     game_menu.add_separator()
     game_menu.add_command(label="Exit", command=root.quit)
     menu_bar.add_cascade(label="Game", menu=game_menu)
@@ -209,7 +264,6 @@ def main():
     root = Tk()
     root.title("Othello")
     root.iconbitmap("./assets/icon.ico")
-    add_menu_widget(root)
     root.geometry("400x250")
 
     n_variable = IntVar(value=N)
@@ -224,8 +278,32 @@ def main():
     black_move_ordering = BooleanVar(value=BLACK_MOVE_ORDERING)
     white_move_ordering = BooleanVar(value=WHITE_MOVE_ORDERING)
 
+    add_menu_widget(root,
+                    n_variable,
+                    black_type,
+                    white_type,
+                    black_hints,
+                    white_hints,
+                    black_depth,
+                    white_depth,
+                    black_eval_fn,
+                    white_eval_fn,
+                    black_move_ordering,
+                    white_move_ordering)
+
     start_btn = Button(root, height=2, width=15, text="Start",
-                       font='Helvetica 12 italic', command=lambda: start_game(root))
+                       font='Helvetica 12 italic', command=lambda: start_game(root,
+                                                                              n_variable,
+                                                                              black_type,
+                                                                              white_type,
+                                                                              black_hints,
+                                                                              white_hints,
+                                                                              black_depth,
+                                                                              white_depth,
+                                                                              black_eval_fn,
+                                                                              white_eval_fn,
+                                                                              black_move_ordering,
+                                                                              white_move_ordering))
     settings_btn = Button(root, height=2, width=15, text="Settings",
                           font='Helvetica 12 italic',
                           command=lambda: display_settings_window(root,
