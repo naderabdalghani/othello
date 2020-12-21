@@ -17,7 +17,7 @@ RULES = \
     "player. When neither player can move, the game ends. This occurs when the grid has filled up, or when one " \
     "player has no more pieces on the board, or when neither player can legally place a piece in any of the " \
     "remaining squares. The player with more pieces on the board at the end wins. "
-N = 8
+BOARD_SIZE = 8
 BLACK_PLAYER_TYPE = "human"
 WHITE_PLAYER_TYPE = "computer"
 BLACK_HINTS = True
@@ -65,8 +65,61 @@ def toggle_widgets(widgets):
             widget["state"] = NORMAL
 
 
+def save_game_data(root,
+                   board_size,
+                   black_type,
+                   white_type,
+                   black_hints,
+                   white_hints,
+                   black_depth,
+                   white_depth,
+                   black_eval_fn,
+                   white_eval_fn,
+                   black_move_ordering,
+                   white_move_ordering):
+    board_size.get()
+    black_type.get()
+    white_type.get()
+    black_hints.get()
+    white_hints.get()
+    black_depth.get()
+    white_depth.get()
+    black_eval_fn.get()
+    white_eval_fn.get()
+    black_move_ordering.get()
+    white_move_ordering.get()
+    root.destroy()
+
+
+def reset_game_data(root,
+                    board_size,
+                    black_type,
+                    white_type,
+                    black_hints,
+                    white_hints,
+                    black_depth,
+                    white_depth,
+                    black_eval_fn,
+                    white_eval_fn,
+                    black_move_ordering,
+                    white_move_ordering):
+    board_size.set(BOARD_SIZE)
+    black_type.set(BLACK_PLAYER_TYPE)
+    white_type.set(WHITE_PLAYER_TYPE)
+    black_hints.set(BLACK_HINTS)
+    white_hints.set(WHITE_HINTS)
+    black_depth.set(BLACK_DEPTH)
+    white_depth.set(WHITE_DEPTH)
+    black_eval_fn.set(BLACK_EVALUATION_FN)
+    white_eval_fn.set(WHITE_EVALUATION_FN)
+    black_move_ordering.set(BLACK_MOVE_ORDERING)
+    white_move_ordering.set(WHITE_MOVE_ORDERING)
+    if root is not None:
+        root.destroy()
+
+
 def display_settings_window(root,
-                            n_variable,
+                            board_size,
                             black_type,
                             white_type,
                             black_hints,
@@ -87,9 +140,9 @@ def display_settings_window(root,
     settings_window.focus_force()
     padding = 25
 
-    # N values dropdown menu
-    n_label = Label(settings_window, text="Board Size:", font='Helvetica 12 bold')
-    n_dropdown = OptionMenu(settings_window, n_variable, *N_VALUES)
+    # BOARD_SIZE values dropdown menu
+    board_size_label = Label(settings_window, text="Board Size:", font='Helvetica 12 bold')
+    board_size_dropdown = OptionMenu(settings_window, board_size, *N_VALUES)
     # Labels
     black_label = Label(settings_window, text="Black:", font='Helvetica 12 bold')
     white_label = Label(settings_window, text="White:", font='Helvetica 12 bold')
@@ -159,9 +212,8 @@ def display_settings_window(root,
                                                                                                 white_move_ord_checkbox
                                                                                             ]))
 
-    # Rendering
-    n_label.grid(column=1, row=1, sticky=W, ipadx=padding, ipady=padding)
-    n_dropdown.grid(column=2, row=1, sticky=W, ipadx=padding)
+    board_size_label.grid(column=1, row=1, sticky=W, ipadx=padding, ipady=padding)
+    board_size_dropdown.grid(column=2, row=1, sticky=W, ipadx=padding)
 
     black_label.grid(column=1, row=2, sticky=W, ipadx=padding)
     black_human_radio_btn.grid(column=1, row=3, sticky=W, ipadx=padding)
@@ -183,9 +235,38 @@ def display_settings_window(root,
     white_eval_dropdown.grid(column=2, row=15, sticky=W, ipadx=padding)
     white_move_ord_checkbox.grid(column=1, row=16, sticky=W, ipadx=padding)
 
+    save_btn = Button(settings_window, text="Save", font='Helvetica 12 italic',
+                      command=lambda: save_game_data(settings_window,
+                                                     board_size,
+                                                     black_type,
+                                                     white_type,
+                                                     black_hints,
+                                                     white_hints,
+                                                     black_depth,
+                                                     white_depth,
+                                                     black_eval_fn,
+                                                     white_eval_fn,
+                                                     black_move_ordering,
+                                                     white_move_ordering))
+    cancel_btn = Button(settings_window, text="Cancel", font='Helvetica 12 italic',
+                        command=lambda: reset_game_data(settings_window,
+                                                        board_size,
+                                                        black_type,
+                                                        white_type,
+                                                        black_hints,
+                                                        white_hints,
+                                                        black_depth,
+                                                        white_depth,
+                                                        black_eval_fn,
+                                                        white_eval_fn,
+                                                        black_move_ordering,
+                                                        white_move_ordering))
+    save_btn.grid(column=1, row=20, sticky=S, ipadx=padding, pady=padding)
+    cancel_btn.grid(column=2, row=20, sticky=S, ipadx=padding, pady=padding)
+
 
 def start_game(root,
-               n_variable,
+               board_size,
                black_type,
                white_type,
                black_hints,
@@ -200,7 +281,7 @@ def start_game(root,
         widget.destroy()
     root.geometry("")
     add_menu_widget(root,
-                    n_variable,
+                    board_size,
                     black_type,
                     white_type,
                     black_hints,
@@ -211,12 +292,12 @@ def start_game(root,
                     white_eval_fn,
                     black_move_ordering,
                     white_move_ordering)
-    board = Board(root, n=N)
+    board = Board(root, n=BOARD_SIZE)
     board.pack(side="top", padx=4, pady=4)
 
 
 def add_menu_widget(root,
-                    n_variable,
+                    board_size,
                     black_type,
                     white_type,
                     black_hints,
@@ -230,7 +311,7 @@ def add_menu_widget(root,
     menu_bar = Menu(root)
     game_menu = Menu(menu_bar, tearoff=0)
     game_menu.add_command(label="New Game", command=lambda: start_game(root,
-                                                                       n_variable,
+                                                                       board_size,
                                                                        black_type,
                                                                        white_type,
                                                                        black_hints,
@@ -242,7 +323,7 @@ def add_menu_widget(root,
                                                                        black_move_ordering,
                                                                        white_move_ordering))
     game_menu.add_command(label="Settings", command=lambda: display_settings_window(root,
-                                                                                    n_variable,
+                                                                                    board_size,
                                                                                     black_type,
                                                                                     white_type,
                                                                                     black_hints,
@@ -266,7 +347,7 @@ def main():
     root.iconbitmap("./assets/icon.ico")
     root.geometry("400x250")
 
-    n_variable = IntVar(value=N)
+    board_size = IntVar(value=BOARD_SIZE)
     black_type = StringVar(value=BLACK_PLAYER_TYPE)
     white_type = StringVar(value=WHITE_PLAYER_TYPE)
     black_hints = BooleanVar(value=BLACK_HINTS)
@@ -279,7 +360,7 @@ def main():
     white_move_ordering = BooleanVar(value=WHITE_MOVE_ORDERING)
 
     add_menu_widget(root,
-                    n_variable,
+                    board_size,
                     black_type,
                     white_type,
                     black_hints,
@@ -293,7 +374,7 @@ def main():
 
     start_btn = Button(root, height=2, width=15, text="Start",
                        font='Helvetica 12 italic', command=lambda: start_game(root,
-                                                                              n_variable,
+                                                                              board_size,
                                                                               black_type,
                                                                               white_type,
                                                                               black_hints,
@@ -307,7 +388,7 @@ def main():
     settings_btn = Button(root, height=2, width=15, text="Settings",
                           font='Helvetica 12 italic',
                           command=lambda: display_settings_window(root,
-                                                                  n_variable,
+                                                                  board_size,
                                                                   black_type,
                                                                   white_type,
                                                                   black_hints,
