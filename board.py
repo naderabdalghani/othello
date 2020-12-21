@@ -15,6 +15,7 @@ NEXT_MOVE_IMG = "./assets/next_move_disk.png"
 
 class Board(tk.Frame):
     def __init__(self, parent, n=8, size=32, color="green"):
+        n = 2**math.ceil(math.log2(n))
         self.rows = n
         self.columns = n
         self.size = size
@@ -77,9 +78,6 @@ class Board(tk.Frame):
                 x2 = x1 + self.size
                 y2 = y1 + self.size
                 self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill=color, tags="square")
-
-        self.add_piece(BLACK, 3, 3)
-        self.add_piece(WHITE, 4, 4)
         white_pieces_indices = np.argwhere(self.game.state == WHITE)
         black_pieces_indices = np.argwhere(self.game.state == BLACK)
         next_move_indices = np.argwhere(self.game.state == NEXT_MOVE)
