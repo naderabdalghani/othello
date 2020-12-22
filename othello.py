@@ -31,6 +31,8 @@ class Othello:
         self.state[self.n // 2 - 1, self.n // 2 - 1] = WHITE
         self.state[self.n // 2 - 1, self.n // 2] = BLACK
         self.state[self.n // 2, self.n // 2 - 1] = BLACK
+        self.black_score = 2
+        self.white_score = 2
         self.move_generator(BLACK)
 
     def move_generator(self, player):
