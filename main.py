@@ -33,7 +33,12 @@ EVALUATION_FNS = [
     "simple",
     "advanced"
 ]
-BOARD_SIZE_VALUES = [8, 16, 32, 64, 128]
+BOARD_SIZE_VALUES = [8, 16, 32, 64]
+
+
+def get_cell_size(n):
+    factor = n / 8
+    return 64 / factor
 
 
 def display_about_window(root):
@@ -317,7 +322,7 @@ def start_game(root,
                     white_move_ordering)
     board = Board(root,
                   BOARD_SIZE,
-                  64,
+                  get_cell_size(BOARD_SIZE),
                   "green",
                   BLACK_PLAYER_TYPE,
                   WHITE_PLAYER_TYPE,
@@ -384,16 +389,16 @@ def main():
     root.geometry("400x250")
     root.resizable(False, False)
 
-    global BOARD_SIZE,\
-        BLACK_PLAYER_TYPE,\
-        WHITE_PLAYER_TYPE,\
-        BLACK_HINTS,\
-        WHITE_HINTS,\
-        BLACK_DEPTH,\
-        WHITE_DEPTH,\
-        BLACK_EVALUATION_FN,\
-        WHITE_EVALUATION_FN,\
-        BLACK_MOVE_ORDERING,\
+    global BOARD_SIZE, \
+        BLACK_PLAYER_TYPE, \
+        WHITE_PLAYER_TYPE, \
+        BLACK_HINTS, \
+        WHITE_HINTS, \
+        BLACK_DEPTH, \
+        WHITE_DEPTH, \
+        BLACK_EVALUATION_FN, \
+        WHITE_EVALUATION_FN, \
+        BLACK_MOVE_ORDERING, \
         WHITE_MOVE_ORDERING
 
     board_size = IntVar(value=BOARD_SIZE)
