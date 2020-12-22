@@ -382,6 +382,7 @@ def main():
     root.title("Othello")
     root.iconbitmap("./assets/icon.ico")
     root.geometry("400x250")
+    root.resizable(False, False)
 
     global BOARD_SIZE,\
         BLACK_PLAYER_TYPE,\
