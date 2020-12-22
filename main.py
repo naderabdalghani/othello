@@ -33,7 +33,7 @@ EVALUATION_FNS = [
     "simple",
     "advanced"
 ]
-N_VALUES = [8, 16, 32, 64, 128]
+BOARD_SIZE_VALUES = [8, 16, 32, 64, 128]
 
 
 def display_about_window(root):
@@ -165,7 +165,7 @@ def display_settings_window(root,
 
     # BOARD_SIZE values dropdown menu
     board_size_label = Label(settings_window, text="Board Size:", font='Helvetica 12 bold')
-    board_size_dropdown = OptionMenu(settings_window, board_size, *N_VALUES)
+    board_size_dropdown = OptionMenu(settings_window, board_size, *BOARD_SIZE_VALUES)
     # Labels
     black_label = Label(settings_window, text="Black:", font='Helvetica 12 bold')
     white_label = Label(settings_window, text="White:", font='Helvetica 12 bold')
@@ -315,7 +315,20 @@ def start_game(root,
                     white_eval_fn,
                     black_move_ordering,
                     white_move_ordering)
-    board = Board(root, n=BOARD_SIZE)
+    board = Board(root,
+                  BOARD_SIZE,
+                  64,
+                  "green",
+                  BLACK_PLAYER_TYPE,
+                  WHITE_PLAYER_TYPE,
+                  BLACK_HINTS,
+                  WHITE_HINTS,
+                  BLACK_DEPTH,
+                  WHITE_DEPTH,
+                  BLACK_EVALUATION_FN,
+                  WHITE_EVALUATION_FN,
+                  BLACK_MOVE_ORDERING,
+                  WHITE_MOVE_ORDERING)
     board.pack(side="top", padx=4, pady=4)
 
 
