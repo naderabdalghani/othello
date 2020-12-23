@@ -142,8 +142,10 @@ class Othello:
             elif self.state[x, y] == player:
                 if player == BLACK:
                     self.black_score += len(pieces_to_be_flipped)
+                    self.white_score -= len(pieces_to_be_flipped)
                 else:
                     self.white_score += len(pieces_to_be_flipped)
+                    self.black_score -= len(pieces_to_be_flipped)
                 for piece in pieces_to_be_flipped:
                     self.state[piece[0], piece[1]] = player
                 break
