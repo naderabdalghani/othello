@@ -29,6 +29,10 @@ class Othello:
         for index in pieces_indices:
             for direction in DIRECTIONS:
                 self.single_piece_move_generator(player, opponent, index, direction, moves)
+        if len(moves) == 0:
+            self.no_moves_semaphore += 1
+        else:
+            self.no_moves_semaphore = 0
         return moves
 
     def single_piece_move_generator(self, player, opponent, start, direction, moves):
@@ -108,6 +112,23 @@ class Othello:
             x += delta_x
             y += delta_y
 
+    def status(self):
+        if self.black_score == 0:
+            self.white_score = self.n * self.n
+            return WHITE_WON
+        elif self.white_score == 0:
+            self.black_score = self.n * self.n
+            return BLACK_WON
+        if self.black_score + self.white_score == self.n * self.n or self.no_moves_semaphore >= 2:
+            if self.black_score > self.white_score:
+                self.black_score = self.n * self.n - self.white_score
+                return BLACK_WON
+            if self.white_score > self.black_score:
+                self.white_score = self.n * self.n - self.black_score
+                return WHITE_WON
+            if self.black_score == self.white_score:
+                return DRAW
+        return GAME_IN_PROGRESS
 
 
 def simple_evaluation_fn(player_type, moves):
