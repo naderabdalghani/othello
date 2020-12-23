@@ -26,7 +26,7 @@ class Board(Frame):
                  white_evaluation_fn,
                  black_move_ordering,
                  white_move_ordering):
-
+        # Initialize agents
         self.black = Agent(BLACK,
                            black_player_type,
                            black_hints,
@@ -40,13 +40,17 @@ class Board(Frame):
                            white_depth,
                            (simple_evaluation_fn if white_evaluation_fn == "simple" else advanced_evaluation_fn),
                            white_move_ordering)
+        # Initialize game object
+        self.game = Othello(n)
+        # Pass turn to black as black always starts first
         self.current_player = self.black
+        # Initialize board parameters
         n = 2 ** math.ceil(math.log2(n))
         self.rows = n
         self.columns = n
         self.size = size
         self.color = color
-        self.game = Othello(n)
+        # Initialize images
         self.image_size = math.floor(size * 0.75)
         image = PIL.Image.open(WHITE_IMG)
         image = image.resize((self.image_size, self.image_size))
@@ -57,7 +61,7 @@ class Board(Frame):
         image = PIL.Image.open(NEXT_MOVE_IMG)
         image = image.resize((self.image_size, self.image_size))
         self.next_move_img = PIL.ImageTk.PhotoImage(image)
-
+        # Initialize widgets (board, scoreboard)
         Frame.__init__(self, parent, bg="gray")
         self.black_score_var = IntVar(value=self.game.black_score)
         self.white_score_var = IntVar(value=self.game.white_score)
@@ -76,6 +80,7 @@ class Board(Frame):
                                  textvariable=self.game_info_var, font='System 15')
         self.black_score_widget.image = self.black_img
         self.white_score_widget.image = self.white_img
+        # Render widgets
         self.canvas.pack(side="top", fill="both", expand=True, padx=4, pady=4)
         self.score_board.pack(side="bottom", fill="both", expand=True, padx=4, pady=4)
         self.black_score_widget.pack(side="left")
