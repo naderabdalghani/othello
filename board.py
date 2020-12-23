@@ -118,7 +118,7 @@ class Board(Frame):
             self.set_game_info_text()
             self.refresh()
 
-    def add_piece(self, kind, row, column):
+    def add_piece(self, kind, row, column, hints=False):
         x0 = (column * self.size) + int(self.size / 2)
         y0 = (row * self.size) + int(self.size / 2)
         if kind == WHITE:
@@ -126,9 +126,10 @@ class Board(Frame):
         elif kind == BLACK:
             self.canvas.create_image(x0, y0, image=self.black_img, tags="piece", anchor=CENTER)
         elif kind == VALID_MOVE:
-            move_btn = Button(self, image=self.next_move_img,
+            move_btn = Button(self, bg=self.color, activebackground=self.color, relief=FLAT, overrelief=FLAT,
                               command=lambda: self.run_player_move([row, column]), anchor=CENTER)
-            move_btn.configure(bg=self.color, activebackground=self.color, relief=FLAT, overrelief=FLAT)
+            if hints:
+                move_btn.configure(image=self.next_move_img)
             self.moves_btns.append(move_btn)
             self.canvas.create_window(x0, y0, anchor=CENTER, window=move_btn, height=self.size - 1, width=self.size - 1,
                                       tags="move")
@@ -172,10 +173,8 @@ class Board(Frame):
             self.add_piece(WHITE, index[0], index[1])
         for index in black_pieces_indices:
             self.add_piece(BLACK, index[0], index[1])
-        show_hints = (self.current_player == self.black and self.black.agent_type == "human" and self.black.hints) or \
-                     (self.current_player == self.white and self.white.agent_type == "human" and self.white.hints)
-        if show_hints:
+        if self.current_player.agent_type == "human":
             for index in next_move_indices:
-                self.add_piece(VALID_MOVE, index[0], index[1])
+                self.add_piece(VALID_MOVE, index[0], index[1], self.current_player.hints)
         self.canvas.tag_raise("piece")
         self.canvas.tag_lower("square")
