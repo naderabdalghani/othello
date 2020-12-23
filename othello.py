@@ -32,38 +32,20 @@ class Othello:
         return moves
 
     def single_piece_move_generator(self, player, opponent, start, direction, moves):
-        delta_x = None
-        delta_y = None
-        if direction == "north":
+        delta_x = 0
+        delta_y = 0
+        if direction in ("north", "north_west", "north_east"):
             delta_x = -1
-            delta_y = 0
-        elif direction == "south":
+        elif direction in ("south", "south_west", "south_east"):
             delta_x = 1
-            delta_y = 0
-        elif direction == "west":
-            delta_x = 0
+        if direction in ("west", "north_west", "south_west"):
             delta_y = -1
-        elif direction == "east":
-            delta_x = 0
+        elif direction in ("east", "north_east", "south_east"):
             delta_y = 1
-        elif direction == "north_west":
-            delta_x = -1
-            delta_y = -1
-        elif direction == "north_east":
-            delta_x = -1
-            delta_y = 1
-        elif direction == "south_west":
-            delta_x = 1
-            delta_y = -1
-        elif direction == "south_east":
-            delta_x = 1
-            delta_y = 1
-        x = start[0]
-        y = start[1]
+        x = start[0] + delta_x
+        y = start[1] + delta_y
         last_seen_opponent_piece = None
         while not self.out_of_bounds(x, y):
-            x += delta_x
-            y += delta_y
             if self.state[x, y] == opponent:
                 last_seen_opponent_piece = [x, y]
             elif self.state[x, y] == player:
@@ -75,11 +57,16 @@ class Othello:
                         moves.append(Move(x, y))
                         break
                 break
+            elif self.state[x, y] == VALID_MOVE:
+                break
+            x += delta_x
+            y += delta_y
 
     def out_of_bounds(self, x, y):
         return x < 0 or y < 0 or x >= self.n or y >= self.n
 
     def apply_move(self, player, move):
+        self.state[self.state == VALID_MOVE] = EMPTY
         self.state[move[0], move[1]] = player
         if player == BLACK:
             self.black_score += 1
@@ -88,41 +75,22 @@ class Othello:
         opponent = WHITE if player == BLACK else BLACK
         for direction in DIRECTIONS:
             self.apply_move_single_direction(player, opponent, move, direction)
-        self.state[self.state == VALID_MOVE] = EMPTY
 
     def apply_move_single_direction(self, player, opponent, move, direction):
-        delta_x = None
-        delta_y = None
-        if direction == "north":
+        delta_x = 0
+        delta_y = 0
+        if direction in ("north", "north_west", "north_east"):
             delta_x = -1
-            delta_y = 0
-        elif direction == "south":
+        elif direction in ("south", "south_west", "south_east"):
             delta_x = 1
-            delta_y = 0
-        elif direction == "west":
-            delta_x = 0
+        if direction in ("west", "north_west", "south_west"):
             delta_y = -1
-        elif direction == "east":
-            delta_x = 0
+        elif direction in ("east", "north_east", "south_east"):
             delta_y = 1
-        elif direction == "north_west":
-            delta_x = -1
-            delta_y = -1
-        elif direction == "north_east":
-            delta_x = -1
-            delta_y = 1
-        elif direction == "south_west":
-            delta_x = 1
-            delta_y = -1
-        elif direction == "south_east":
-            delta_x = 1
-            delta_y = 1
-        x = move[0]
-        y = move[1]
+        x = move[0] + delta_x
+        y = move[1] + delta_y
         pieces_to_be_flipped = []
         while not self.out_of_bounds(x, y):
-            x += delta_x
-            y += delta_y
             if self.state[x, y] == opponent:
                 pieces_to_be_flipped.append([x, y])
             elif self.state[x, y] == player:
@@ -137,6 +105,9 @@ class Othello:
                 break
             elif self.state[x, y] == EMPTY:
                 break
+            x += delta_x
+            y += delta_y
+
 
 
 def simple_evaluation_fn(player_type, moves):
