@@ -1,19 +1,5 @@
 import numpy as np
-
-EMPTY = 0
-WHITE = 1
-BLACK = 2
-VALID_MOVE = 3
-DIRECTIONS = [
-    "north",
-    "south",
-    "west",
-    "east",
-    "north_west",
-    "north_east",
-    "south_west",
-    "south_east"
-]
+from constants import EMPTY, WHITE, BLACK, VALID_MOVE, DIRECTIONS, BLACK_WON, WHITE_WON, DRAW, GAME_IN_PROGRESS
 
 
 class Move:

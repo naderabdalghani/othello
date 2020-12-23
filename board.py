@@ -5,20 +5,9 @@ import PIL.ImageTk
 import math
 from othello import Othello, simple_evaluation_fn, advanced_evaluation_fn
 from agent import Agent
-
-WHITE = 1
-BLACK = 2
-VALID_MOVE = 3
-WHITE_IMG = "./assets/white_disk.png"
-BLACK_IMG = "./assets/black_disk.png"
-NEXT_MOVE_IMG = "./assets/next_move_disk.png"
-BLACK_TURN_TEXT = "BLACK'S TURN"
-WHITE_TURN_TEXT = "WHITE'S TURN"
-BLACK_WON_TEXT = "BLACK WON!"
-WHITE_WON_TEXT = "WHITE WON!"
-DRAW_TEXT = "IT'S A DRAW"
-BLACK_LOADING_TEXT = "BLACK'S THINKING..."
-WHITE_LOADING_TEXT = "WHITE'S THINKING..."
+from constants import WHITE, BLACK, VALID_MOVE, WHITE_IMG, BLACK_IMG, NEXT_MOVE_IMG, BLACK_TURN_TEXT, WHITE_TURN_TEXT,\
+    BLACK_WON_TEXT, WHITE_WON_TEXT, DRAW_TEXT, BLACK_LOADING_TEXT, WHITE_LOADING_TEXT, GAME_IN_PROGRESS, BLACK_WON,\
+    WHITE_WON, DRAW
 
 
 class Board(Frame):
