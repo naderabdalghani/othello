@@ -86,15 +86,22 @@ class Board(Frame):
         self.moves_btns = []
         self.run_player_move()
 
-    def set_game_info_text(self):
-        if self.current_player.identifier == WHITE and self.current_player.agent_type == "computer":
-            self.game_info_var.set(WHITE_LOADING_TEXT)
-        if self.current_player.identifier == BLACK and self.current_player.agent_type == "computer":
-            self.game_info_var.set(BLACK_LOADING_TEXT)
-        if self.current_player.identifier == WHITE and self.current_player.agent_type == "human":
-            self.game_info_var.set(WHITE_TURN_TEXT)
-        if self.current_player.identifier == BLACK and self.current_player.agent_type == "human":
-            self.game_info_var.set(BLACK_TURN_TEXT)
+    def set_game_info_text(self, event=GAME_IN_PROGRESS):
+        if event == GAME_IN_PROGRESS:
+            if self.current_player.identifier == WHITE and self.current_player.agent_type == "computer":
+                self.game_info_var.set(WHITE_LOADING_TEXT)
+            if self.current_player.identifier == BLACK and self.current_player.agent_type == "computer":
+                self.game_info_var.set(BLACK_LOADING_TEXT)
+            if self.current_player.identifier == WHITE and self.current_player.agent_type == "human":
+                self.game_info_var.set(WHITE_TURN_TEXT)
+            if self.current_player.identifier == BLACK and self.current_player.agent_type == "human":
+                self.game_info_var.set(BLACK_TURN_TEXT)
+        elif event == BLACK_WON:
+            self.game_info_var.set(BLACK_WON_TEXT)
+        elif event == WHITE_WON:
+            self.game_info_var.set(WHITE_WON_TEXT)
+        elif event == DRAW:
+            self.game_info_var.set(DRAW_TEXT)
 
     def run_player_move(self, move=None):
         if self.current_player.agent_type == "human" and move is not None:
