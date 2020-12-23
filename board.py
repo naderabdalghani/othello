@@ -109,17 +109,25 @@ class Board(Frame):
             self.game_info_var.set(DRAW_TEXT)
 
     def run_player_move(self, move=None):
-        if self.current_player.agent_type == "human" and move is not None:
-            self.game.apply_move(self.current_player.identifier, move)
+        if self.current_player.agent_type == "human":
+            if move is not None:
+                self.game.apply_move(self.current_player.identifier, move)
+                self.current_player = self.black if self.current_player.identifier == WHITE else self.white
+            event = self.game.status()
+            if event == GAME_IN_PROGRESS:
+                if self.current_player.agent_type == "human":
+                    moves = self.game.move_generator(self.current_player.identifier)
+                    if len(moves) == 0:
+                        self.current_player = self.black if self.current_player.identifier == WHITE else self.white
+                        moves = self.game.move_generator(self.current_player.identifier)
+                        if len(moves) == 0:
+                            self.current_player = self.black if self.current_player.identifier == WHITE else self.white
+                            event = self.game.status()
             self.black_score_var.set(self.game.black_score)
             self.white_score_var.set(self.game.white_score)
-            self.current_player = self.black if self.current_player.identifier == WHITE else self.white
-            self.set_game_info_text()
-            self.canvas.delete("move")
-            for btn in self.moves_btns:
-                btn.destroy()
-            self.moves_btns = []
+            self.set_game_info_text(event)
             self.refresh()
+
         elif self.current_player.agent_type == "computer":
             possible_moves = self.game.move_generator(self.current_player.identifier)
             player_move = self.current_player.get_move(possible_moves)
