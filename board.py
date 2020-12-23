@@ -12,6 +12,13 @@ VALID_MOVE = 3
 WHITE_IMG = "./assets/white_disk.png"
 BLACK_IMG = "./assets/black_disk.png"
 NEXT_MOVE_IMG = "./assets/next_move_disk.png"
+BLACK_TURN_TEXT = "BLACK'S TURN"
+WHITE_TURN_TEXT = "WHITE'S TURN"
+BLACK_WON_TEXT = "BLACK WON!"
+WHITE_WON_TEXT = "WHITE WON!"
+DRAW_TEXT = "IT'S A DRAW"
+BLACK_LOADING_TEXT = "BLACK'S THINKING..."
+WHITE_LOADING_TEXT = "WHITE'S THINKING..."
 
 
 class Board(Frame):
@@ -62,19 +69,52 @@ class Board(Frame):
         image = image.resize((self.image_size, self.image_size))
         self.next_move_img = PIL.ImageTk.PhotoImage(image)
 
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, bg="gray")
+        self.black_score_var = IntVar(value=self.game.black_score)
+        self.white_score_var = IntVar(value=self.game.white_score)
+        self.game_info_var = StringVar(value=BLACK_TURN_TEXT)
         self.canvas = Canvas(self, borderwidth=0, highlightthickness=0,
-                             width=n * size, height=n * size)
+                             width=n * size, height=n * size, bg="gray")
+        self.score_board = Canvas(self, width=n * size, height=60, bg="gray", highlightthickness=0)
+        self.black_score_widget = Label(self.score_board, compound=LEFT, image=self.black_img,
+                                        text=self.game.black_score, bg="gray", padx=25,
+                                        textvariable=self.black_score_var, font='System 30 bold')
+        self.white_score_widget = Label(self.score_board, compound=RIGHT, image=self.white_img,
+                                        text=self.game.white_score, bg="gray", padx=25,
+                                        textvariable=self.white_score_var, font='System 30 bold')
+        self.info_widget = Label(self.score_board, compound=RIGHT,
+                                 text=BLACK_TURN_TEXT, bg="gray",
+                                 textvariable=self.game_info_var, font='System 15')
+        self.black_score_widget.image = self.black_img
+        self.white_score_widget.image = self.white_img
         self.canvas.pack(side="top", fill="both", expand=True, padx=4, pady=4)
+        self.score_board.pack(side="bottom", fill="both", expand=True, padx=4, pady=4)
+        self.black_score_widget.pack(side="left")
+        self.info_widget.pack(side="left", expand=True)
+        self.white_score_widget.pack(side="right")
 
         self.canvas.bind("<Configure>", self.refresh)
         self.moves_btns = []
         self.run_player_move()
 
+    def set_game_info_text(self):
+        if self.current_player.identifier == WHITE and self.current_player.agent_type == "computer":
+            self.game_info_var.set(WHITE_LOADING_TEXT)
+        if self.current_player.identifier == BLACK and self.current_player.agent_type == "computer":
+            self.game_info_var.set(BLACK_LOADING_TEXT)
+        if self.current_player.identifier == WHITE and self.current_player.agent_type == "human":
+            self.game_info_var.set(WHITE_TURN_TEXT)
+        if self.current_player.identifier == BLACK and self.current_player.agent_type == "human":
+            self.game_info_var.set(BLACK_TURN_TEXT)
+
     def run_player_move(self, move=None):
         if self.current_player.agent_type == "human" and move is not None:
             self.game.apply_move(self.current_player.identifier, move)
+            self.black_score_var.set(self.game.black_score)
+            self.white_score_var.set(self.game.white_score)
             self.current_player = self.black if self.current_player.identifier == WHITE else self.white
+            self.set_game_info_text()
+            self.canvas.delete("move")
             for btn in self.moves_btns:
                 btn.destroy()
             self.moves_btns = []
@@ -83,8 +123,11 @@ class Board(Frame):
             possible_moves = self.game.move_generator(self.current_player.identifier)
             player_move = self.current_player.get_move(possible_moves)
             self.game.apply_move(self.current_player.identifier, player_move)
+            self.black_score_var.set(self.game.black_score)
+            self.white_score_var.set(self.game.white_score)
             self.current_player = self.black if self.current_player.identifier == WHITE else self.white
-            self.canvas.update()
+            self.set_game_info_text()
+            self.refresh()
 
     def add_piece(self, kind, row, column):
         x0 = (column * self.size) + int(self.size / 2)
@@ -98,7 +141,8 @@ class Board(Frame):
                               command=lambda: self.run_player_move([row, column]), anchor=CENTER)
             move_btn.configure(bg=self.color, activebackground=self.color, relief=FLAT, overrelief=FLAT)
             self.moves_btns.append(move_btn)
-            self.canvas.create_window(x0, y0, anchor=CENTER, window=move_btn, height=self.size - 1, width=self.size - 1)
+            self.canvas.create_window(x0, y0, anchor=CENTER, window=move_btn, height=self.size - 1, width=self.size - 1,
+                                      tags="move")
 
     def update_images(self):
         self.image_size = math.floor(self.size * 0.75)
@@ -121,6 +165,7 @@ class Board(Frame):
         color = self.color
         self.canvas.delete("square")
         self.canvas.delete("piece")
+        self.canvas.delete("move")
         for btn in self.moves_btns:
             btn.destroy()
         self.moves_btns = []
