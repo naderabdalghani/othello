@@ -33,7 +33,6 @@ class Board(Frame):
                            black_depth,
                            (simple_evaluation_fn if black_evaluation_fn == "simple" else advanced_evaluation_fn),
                            black_move_ordering)
-
         self.white = Agent(WHITE,
                            white_player_type,
                            white_hints,
@@ -46,8 +45,7 @@ class Board(Frame):
         self.current_player = self.black
         # Initialize board parameters
         n = 2 ** math.ceil(math.log2(n))
-        self.rows = n
-        self.columns = n
+        self.n = n
         self.size = size
         self.color = color
         # Initialize images
@@ -69,8 +67,7 @@ class Board(Frame):
             self.game_info_var = StringVar(value=BLACK_LOADING_TEXT)
         else:
             self.game_info_var = StringVar(value=BLACK_TURN_TEXT)
-        self.canvas = Canvas(self, borderwidth=0, highlightthickness=0,
-                             width=n * size, height=n * size, bg="gray")
+        self.canvas = Canvas(self, borderwidth=0, highlightthickness=0, width=n * size, height=n * size, bg="gray")
         self.score_board = Canvas(self, width=n * size, height=60, bg="gray", highlightthickness=0)
         self.black_score_widget = Label(self.score_board, compound=LEFT, image=self.black_img,
                                         text=self.game.black_score, bg="gray", padx=25,
@@ -78,9 +75,8 @@ class Board(Frame):
         self.white_score_widget = Label(self.score_board, compound=RIGHT, image=self.white_img,
                                         text=self.game.white_score, bg="gray", padx=25,
                                         textvariable=self.white_score_var, font='System 30 bold')
-        self.info_widget = Label(self.score_board, compound=RIGHT,
-                                 text=BLACK_TURN_TEXT, bg="gray",
-                                 textvariable=self.game_info_var, font='System 15')
+        self.info_widget = Label(self.score_board, compound=RIGHT, text=BLACK_TURN_TEXT, bg="gray", font='System 15',
+                                 textvariable=self.game_info_var)
         self.black_score_widget.image = self.black_img
         self.white_score_widget.image = self.white_img
         self.moves_btns = []
@@ -213,14 +209,13 @@ class Board(Frame):
         self.canvas.update()
 
     def initialize_board(self):
-        color = self.color
-        for row in range(self.rows):
-            for col in range(self.columns):
+        for row in range(self.n):
+            for col in range(self.n):
                 x1 = (col * self.size)
                 y1 = (row * self.size)
                 x2 = x1 + self.size
                 y2 = y1 + self.size
-                self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill=color, tags="square")
+                self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill=self.color, tags="square")
         white_pieces_indices = np.argwhere(self.game.state == WHITE)
         black_pieces_indices = np.argwhere(self.game.state == BLACK)
         next_move_indices = np.argwhere(self.game.state == VALID_MOVE)
