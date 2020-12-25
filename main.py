@@ -1,6 +1,6 @@
 from tkinter import *
 from board import Board
-from constants import RULES, BOARD_SIZE_VALUES, EVALUATION_FNS
+from constants import RULES, CELL_SIZE, BOARD_SIZE_VALUES, EVALUATION_FNS
 
 BOARD_SIZE = 8
 BLACK_PLAYER_TYPE = "human"
@@ -17,7 +17,7 @@ WHITE_DEPTH = 5
 
 def get_cell_size(n):
     factor = n / 8
-    return 64 / factor
+    return CELL_SIZE / factor
 
 
 def display_about_window(root):
