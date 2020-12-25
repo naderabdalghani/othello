@@ -83,6 +83,7 @@ class Board(Frame):
                                  textvariable=self.game_info_var, font='System 15')
         self.black_score_widget.image = self.black_img
         self.white_score_widget.image = self.white_img
+        self.moves_btns = []
         # Render widgets
         self.canvas.pack(side="top", fill="both", expand=True, padx=4, pady=4)
         self.score_board.pack(side="bottom", fill="both", expand=True, padx=4, pady=4)
@@ -90,8 +91,8 @@ class Board(Frame):
         self.info_widget.pack(side="left", expand=True)
         self.white_score_widget.pack(side="right")
 
-        self.moves_btns = []
-        # self.canvas.bind("<Configure>", self.initialize_board)
+        self.canvas.bind("<Destroy>", self.quit)
+        self.window_destroyed = False
         self.initialize_board()
         if self.current_player.agent_type == "computer":
             self.canvas.after(1000, self.run_player_move)
@@ -138,7 +139,7 @@ class Board(Frame):
             self.set_game_info_text(event)
             self.refresh()
             if pass_turn_to_computer:
-                self.run_player_move()
+                self.canvas.after(0, self.run_player_move)
         elif self.current_player.agent_type == "computer":
             player_move = self.current_player.get_move(self.game)
             if player_move is not None:
@@ -158,7 +159,7 @@ class Board(Frame):
             self.set_game_info_text(event)
             self.refresh()
             if pass_turn_to_computer:
-                self.run_player_move()
+                self.canvas.after(0, self.run_player_move)
 
     def add_piece(self, kind, row, column, hints=False):
         x0 = (column * self.size) + int(self.size / 2)
@@ -189,6 +190,8 @@ class Board(Frame):
         self.next_move_img = PIL.ImageTk.PhotoImage(image)
 
     def refresh(self):
+        if self.window_destroyed:
+            return
         self.canvas.delete("piece")
         self.canvas.delete("move")
         for btn in self.moves_btns:
@@ -209,7 +212,7 @@ class Board(Frame):
         self.canvas.tag_lower("square")
         self.canvas.update()
 
-    def initialize_board(self, event=None):
+    def initialize_board(self):
         color = self.color
         for row in range(self.rows):
             for col in range(self.columns):
@@ -232,3 +235,7 @@ class Board(Frame):
         self.canvas.tag_raise("piece")
         self.canvas.tag_lower("square")
         self.canvas.update()
+
+    def quit(self, event=None):
+        self.window_destroyed = True
+        self.destroy()
