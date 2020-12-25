@@ -65,7 +65,10 @@ class Board(Frame):
         Frame.__init__(self, parent, bg="gray")
         self.black_score_var = IntVar(value=self.game.black_score)
         self.white_score_var = IntVar(value=self.game.white_score)
-        self.game_info_var = StringVar(value=BLACK_TURN_TEXT)
+        if self.current_player.agent_type == "computer":
+            self.game_info_var = StringVar(value=BLACK_LOADING_TEXT)
+        else:
+            self.game_info_var = StringVar(value=BLACK_TURN_TEXT)
         self.canvas = Canvas(self, borderwidth=0, highlightthickness=0,
                              width=n * size, height=n * size, bg="gray")
         self.score_board = Canvas(self, width=n * size, height=60, bg="gray", highlightthickness=0)
@@ -87,9 +90,13 @@ class Board(Frame):
         self.info_widget.pack(side="left", expand=True)
         self.white_score_widget.pack(side="right")
 
-        self.canvas.bind("<Configure>", self.refresh)
         self.moves_btns = []
-        self.run_player_move()
+        # self.canvas.bind("<Configure>", self.initialize_board)
+        self.initialize_board()
+        if self.current_player.agent_type == "computer":
+            self.canvas.after(1000, self.run_player_move)
+        else:
+            self.run_player_move()
 
     def set_game_info_text(self, event=GAME_IN_PROGRESS):
         if event == GAME_IN_PROGRESS:
@@ -109,6 +116,7 @@ class Board(Frame):
             self.game_info_var.set(DRAW_TEXT)
 
     def run_player_move(self, move=None):
+        pass_turn_to_computer = False
         if self.current_player.agent_type == "human":
             if move is not None:
                 self.game.apply_move(self.current_player.identifier, move)
@@ -117,26 +125,40 @@ class Board(Frame):
             if event == GAME_IN_PROGRESS:
                 if self.current_player.agent_type == "human":
                     moves = self.game.move_generator(self.current_player.identifier)
-                    if len(moves) == 0:
+                    if len(moves) == 0:  # If a player doesn't have a move, pass the play to the other player
                         self.current_player = self.black if self.current_player.identifier == WHITE else self.white
                         moves = self.game.move_generator(self.current_player.identifier)
                         if len(moves) == 0:
                             self.current_player = self.black if self.current_player.identifier == WHITE else self.white
                             event = self.game.status()
+                elif self.current_player.agent_type == "computer":
+                    pass_turn_to_computer = True
             self.black_score_var.set(self.game.black_score)
             self.white_score_var.set(self.game.white_score)
             self.set_game_info_text(event)
             self.refresh()
-
+            if pass_turn_to_computer:
+                self.run_player_move()
         elif self.current_player.agent_type == "computer":
-            possible_moves = self.game.move_generator(self.current_player.identifier)
-            player_move = self.current_player.get_move(possible_moves)
-            self.game.apply_move(self.current_player.identifier, player_move)
+            player_move = self.current_player.get_move(self.game)
+            if player_move is not None:
+                self.game.apply_move(self.current_player.identifier, player_move)
+            self.current_player = self.black if self.current_player.identifier == WHITE else self.white
+            event = self.game.status()
+            if event == GAME_IN_PROGRESS:
+                if self.current_player.agent_type == "human":
+                    moves = self.game.move_generator(self.current_player.identifier)
+                    if len(moves) == 0:  # If a player doesn't have a move, pass the play to the other player
+                        self.current_player = self.black if self.current_player.identifier == WHITE else self.white
+                        pass_turn_to_computer = True
+                elif self.current_player.agent_type == "computer":
+                    pass_turn_to_computer = True
             self.black_score_var.set(self.game.black_score)
             self.white_score_var.set(self.game.white_score)
-            self.current_player = self.black if self.current_player.identifier == WHITE else self.white
-            self.set_game_info_text()
+            self.set_game_info_text(event)
             self.refresh()
+            if pass_turn_to_computer:
+                self.run_player_move()
 
     def add_piece(self, kind, row, column, hints=False):
         x0 = (column * self.size) + int(self.size / 2)
@@ -166,19 +188,29 @@ class Board(Frame):
         image = image.resize((self.image_size, self.image_size))
         self.next_move_img = PIL.ImageTk.PhotoImage(image)
 
-    def refresh(self, event=None):
-        if event is not None:
-            x_size = int(event.width / self.columns)
-            y_size = int(event.height / self.rows)
-            self.size = min(x_size, y_size)
-            self.update_images()
-        color = self.color
-        self.canvas.delete("square")
+    def refresh(self):
         self.canvas.delete("piece")
         self.canvas.delete("move")
         for btn in self.moves_btns:
             btn.destroy()
-        self.moves_btns = []
+            del btn
+        white_pieces_indices = np.argwhere(self.game.state == WHITE)
+        black_pieces_indices = np.argwhere(self.game.state == BLACK)
+        next_move_indices = np.argwhere(self.game.state == VALID_MOVE)
+        for index in white_pieces_indices:
+            self.add_piece(WHITE, index[0], index[1])
+        for index in black_pieces_indices:
+            self.add_piece(BLACK, index[0], index[1])
+        if self.current_player.agent_type == "human":
+            for index in next_move_indices:
+                self.add_piece(VALID_MOVE, index[0], index[1], self.current_player.hints)
+        self.canvas.tag_raise("move")
+        self.canvas.tag_raise("piece")
+        self.canvas.tag_lower("square")
+        self.canvas.update()
+
+    def initialize_board(self, event=None):
+        color = self.color
         for row in range(self.rows):
             for col in range(self.columns):
                 x1 = (col * self.size)
@@ -196,5 +228,7 @@ class Board(Frame):
         if self.current_player.agent_type == "human":
             for index in next_move_indices:
                 self.add_piece(VALID_MOVE, index[0], index[1], self.current_player.hints)
+        self.canvas.tag_raise("move")
         self.canvas.tag_raise("piece")
         self.canvas.tag_lower("square")
+        self.canvas.update()
