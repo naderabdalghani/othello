@@ -3,7 +3,7 @@ import numpy as np
 import PIL.Image
 import PIL.ImageTk
 import math
-from othello import Othello, simple_evaluation_fn, advanced_evaluation_fn
+from othello import Othello
 from agent import Agent
 from constants import WHITE, BLACK, VALID_MOVE, WHITE_IMG, BLACK_IMG, NEXT_MOVE_IMG, BLACK_TURN_TEXT, WHITE_TURN_TEXT,\
     BLACK_WON_TEXT, WHITE_WON_TEXT, DRAW_TEXT, BLACK_LOADING_TEXT, WHITE_LOADING_TEXT, GAME_IN_PROGRESS, BLACK_WON,\
