@@ -31,13 +31,13 @@ class Board(Frame):
                            black_player_type,
                            black_hints,
                            black_depth,
-                           (simple_evaluation_fn if black_evaluation_fn == "simple" else advanced_evaluation_fn),
+                           black_evaluation_fn,
                            black_move_ordering)
         self.white = Agent(WHITE,
                            white_player_type,
                            white_hints,
                            white_depth,
-                           (simple_evaluation_fn if white_evaluation_fn == "simple" else advanced_evaluation_fn),
+                           white_evaluation_fn,
                            white_move_ordering)
         # Initialize game object
         self.game = Othello(n)
@@ -134,10 +134,10 @@ class Board(Frame):
             self.white_score_var.set(self.game.white_score)
             self.set_game_info_text(event)
             self.refresh()
-            if pass_turn_to_computer:
+            if pass_turn_to_computer and event == GAME_IN_PROGRESS:
                 self.canvas.after(0, self.run_player_move)
         elif self.current_player.agent_type == "computer":
-            player_move = self.current_player.get_move(self.game)
+            player_move = self.current_player.get_move(self.game, self.current_player.identifier)
             if player_move is not None:
                 self.game.apply_move(self.current_player.identifier, player_move)
             self.current_player = self.black if self.current_player.identifier == WHITE else self.white
@@ -154,7 +154,7 @@ class Board(Frame):
             self.white_score_var.set(self.game.white_score)
             self.set_game_info_text(event)
             self.refresh()
-            if pass_turn_to_computer:
+            if pass_turn_to_computer and event == GAME_IN_PROGRESS:
                 self.canvas.after(0, self.run_player_move)
 
     def add_piece(self, kind, row, column, hints=False):
