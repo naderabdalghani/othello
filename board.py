@@ -5,9 +5,9 @@ import PIL.ImageTk
 import math
 from othello import Othello
 from agent import Agent
-from constants import WHITE, BLACK, VALID_MOVE, WHITE_IMG, BLACK_IMG, NEXT_MOVE_IMG, BLACK_TURN_TEXT, WHITE_TURN_TEXT,\
-    BLACK_WON_TEXT, WHITE_WON_TEXT, DRAW_TEXT, BLACK_LOADING_TEXT, WHITE_LOADING_TEXT, GAME_IN_PROGRESS, BLACK_WON,\
-    WHITE_WON, DRAW
+from constants import WHITE, BLACK, VALID_MOVE, WHITE_IMG, BLACK_IMG, NEXT_MOVE_IMG, BLACK_TURN_TEXT, WHITE_TURN_TEXT, \
+    BLACK_WON_TEXT, WHITE_WON_TEXT, DRAW_TEXT, BLACK_LOADING_TEXT, WHITE_LOADING_TEXT, GAME_IN_PROGRESS, BLACK_WON, \
+    WHITE_WON, DRAW, LOG_FILE
 
 
 class Board(Frame):
@@ -26,6 +26,7 @@ class Board(Frame):
                  white_evaluation_fn,
                  black_move_ordering,
                  white_move_ordering):
+        open(LOG_FILE, "w")
         # Initialize agents
         self.black = Agent(BLACK,
                            black_player_type,
@@ -39,6 +40,20 @@ class Board(Frame):
                            white_depth,
                            white_evaluation_fn,
                            white_move_ordering)
+        if self.black.agent_type == "computer":
+            with open(LOG_FILE, "a") as f:
+                f.write("Black is initialized with the following parameters:\n"
+                        "Depth: {}\nEvaluation Function Type: {}\nMove Ordering: {}".format(
+                         self.black.depth, self.black.evaluation_fn, self.black.move_ordering
+                        ))
+                f.write("\n\n_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_\n\n")
+        if self.white.agent_type == "computer":
+            with open(LOG_FILE, "a") as f:
+                f.write("White is initialized with the following parameters:\n"
+                        "Depth: {}\nEvaluation Function Type: {}\nMove Ordering: {}".format(
+                         self.white.depth, self.white.evaluation_fn, self.white.move_ordering
+                        ))
+                f.write("\n\n_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_\n\n")
         # Initialize game object
         self.game = Othello(n)
         # Pass turn to black as black always starts first
@@ -107,10 +122,32 @@ class Board(Frame):
                 self.game_info_var.set(BLACK_TURN_TEXT)
         elif event == BLACK_WON:
             self.game_info_var.set(BLACK_WON_TEXT)
+            with open(LOG_FILE, "a") as f:
+                f.write("\n_*_*_*_*_*_*_*_*_*_*_*_* BLACK WON *_*_*_*_*_*_*_*_*_*_*_*_\n\n")
         elif event == WHITE_WON:
             self.game_info_var.set(WHITE_WON_TEXT)
+            with open(LOG_FILE, "a") as f:
+                f.write("\n_*_*_*_*_*_*_*_*_*_*_*_* WHITE WON *_*_*_*_*_*_*_*_*_*_*_*_\n\n")
         elif event == DRAW:
             self.game_info_var.set(DRAW_TEXT)
+            with open(LOG_FILE, "a") as f:
+                f.write("\n_*_*_*_*_*_*_*_*_*_*_*_* DRAW *_*_*_*_*_*_*_*_*_*_*_*_\n\n")
+        if event == BLACK_WON or event == WHITE_WON or event == DRAW:
+            if self.black.agent_type == "computer":
+                with open(LOG_FILE, "a") as f:
+                    f.write("BLACK average branching factor = {}\n"
+                            .format(self.black.total_branching_factor / self.black.turns))
+                    f.write("BLACK average effective branching factor = {}\n"
+                            .format(self.black.total_effective_branching_factor / self.black.turns))
+                    f.write("BLACK average execution time = {}\n"
+                            .format(self.black.total_execution_time / self.black.turns))
+                    f.write("\n_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_*_\n\n")
+                    f.write("WHITE average branching factor = {}\n"
+                            .format(self.white.total_branching_factor / self.white.turns))
+                    f.write("WHITE average effective branching factor = {}\n"
+                            .format(self.white.total_effective_branching_factor / self.white.turns))
+                    f.write("WHITE average execution time = {}\n"
+                            .format(self.white.total_execution_time / self.white.turns))
 
     def run_player_move(self, move=None):
         pass_turn_to_computer = False
