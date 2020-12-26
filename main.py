@@ -1,6 +1,6 @@
 from tkinter import *
 from board import Board
-from constants import RULES, CELL_SIZE, BOARD_SIZE_VALUES, EVALUATION_FNS
+from constants import RULES, CELL_SIZE, BOARD_SIZE_VALUES, EVALUATION_FNS, DEPTH_MAX, DEPTH_MIN
 
 BOARD_SIZE = 8
 BLACK_PLAYER_TYPE = "human"
@@ -161,11 +161,11 @@ def display_settings_window(root,
     # Depth
     black_depth_label = Label(settings_window, text="Depth:",
                               state=(NORMAL if black_type.get() == "computer" else DISABLED))
-    black_depth_spinbox = Spinbox(settings_window, from_=0, to=1000, textvariable=black_depth, width=5,
+    black_depth_spinbox = Spinbox(settings_window, from_=DEPTH_MIN, to=DEPTH_MAX, textvariable=black_depth, width=5,
                                   state=(NORMAL if black_type.get() == "computer" else DISABLED))
     white_depth_label = Label(settings_window, text="Depth:",
                               state=(NORMAL if white_type.get() == "computer" else DISABLED))
-    white_depth_spinbox = Spinbox(settings_window, from_=0, to=1000, textvariable=white_depth, width=5,
+    white_depth_spinbox = Spinbox(settings_window, from_=DEPTH_MIN, to=DEPTH_MAX, textvariable=white_depth, width=5,
                                   state=(NORMAL if white_type.get() == "computer" else DISABLED))
     # Evaluation functions
     black_eval_label = Label(settings_window, text="Evaluation Fn:",
