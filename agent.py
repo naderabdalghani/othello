@@ -1,6 +1,6 @@
 from copy import deepcopy
 from move import Move
-from constants import MAXIMIZING_PLAYER, GAME_IN_PROGRESS, WHITE, BLACK
+from constants import MAXIMIZING_PLAYER, GAME_IN_PROGRESS, WHITE, BLACK, LOG_FILE
 
 
 class Agent:
@@ -17,9 +17,6 @@ class Agent:
     def get_move(self, game, player):
         opponent = WHITE if player == BLACK else BLACK
         move = self.alpha_beta_pruning(game, self.depth, player, opponent)
-        self.log_file = open("player_{}_moves.txt".format(self.identifier), "a")
-        self.log_file.write("({}, {})\n".format(move.x, move.y))
-        self.log_file.close()
         if move.x != -1 and move.y != -1:
             return [move.x, move.y]
         return None
