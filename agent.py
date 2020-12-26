@@ -22,7 +22,8 @@ class Agent:
         return None
 
     def alpha_beta_pruning(self, game, depth, player, opponent, alpha=float('-inf'), beta=float('inf')):
-        if depth == 0 or game.status() != GAME_IN_PROGRESS:
+        possible_moves = game.move_generator(player)
+        if depth == 0 or game.status() != GAME_IN_PROGRESS or len(possible_moves) == 0:
             if self.evaluation_fn == "simple":
                 game.simple_evaluation_fn()
             else:
@@ -30,7 +31,6 @@ class Agent:
             return game.last_move
         if player == MAXIMIZING_PLAYER:
             max_evaluation = Move(value=float('-inf'))
-            possible_moves = game.move_generator(player)
             if self.move_ordering:
                 for move in possible_moves:
                     temp_game = deepcopy(game)
@@ -57,7 +57,6 @@ class Agent:
             return max_evaluation
         else:
             min_evaluation = Move(value=float('inf'))
-            possible_moves = game.move_generator(player)
             if self.move_ordering:
                 for move in possible_moves:
                     temp_game = deepcopy(game)
