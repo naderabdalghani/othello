@@ -1,12 +1,6 @@
 import numpy as np
 from constants import EMPTY, WHITE, BLACK, VALID_MOVE, DIRECTIONS, BLACK_WON, WHITE_WON, DRAW, GAME_IN_PROGRESS
-
-
-class Move:
-    def __init__(self, x, y, value=None):
-        self.x = x
-        self.y = y
-        self.value = value
+from move import Move
 
 
 class Othello:
