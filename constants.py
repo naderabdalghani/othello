@@ -7,6 +7,7 @@ GAME_IN_PROGRESS = 0
 DRAW = 1
 BLACK_WON = 2
 WHITE_WON = 3
+LOG_FILE = "log.txt"
 WHITE_IMG = "./assets/white_disk.png"
 BLACK_IMG = "./assets/black_disk.png"
 NEXT_MOVE_IMG = "./assets/next_move_disk.png"
