@@ -1,12 +1,13 @@
 import numpy as np
-from constants import EMPTY, WHITE, BLACK, VALID_MOVE, DIRECTIONS, BLACK_WON, WHITE_WON, DRAW, GAME_IN_PROGRESS
+from constants import EMPTY, WHITE, BLACK, VALID_MOVE, DIRECTIONS, BLACK_WON, WHITE_WON, DRAW, GAME_IN_PROGRESS,\
+    MAXIMIZING_PLAYER
 from move import Move
 
 
 class Othello:
     def __init__(self, n):
         self.n = n
-        self.state = np.zeros((self.n, self.n))
+        self.state = np.zeros((self.n, self.n), dtype=np.uint8)
         self.state[self.n // 2, self.n // 2] = WHITE
         self.state[self.n // 2 - 1, self.n // 2 - 1] = WHITE
         self.state[self.n // 2 - 1, self.n // 2] = BLACK
@@ -14,6 +15,7 @@ class Othello:
         self.black_score = 2
         self.white_score = 2
         self.no_moves_semaphore = 0
+        self.last_move = None
 
     def move_generator(self, player):
         moves = []
@@ -66,6 +68,7 @@ class Othello:
     def apply_move(self, player, move):
         self.state[self.state == VALID_MOVE] = EMPTY
         self.state[move[0], move[1]] = player
+        self.last_move = Move(move[0], move[1])
         if player == BLACK:
             self.black_score += 1
         else:
