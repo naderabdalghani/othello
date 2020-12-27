@@ -41,12 +41,24 @@ def display_about_window(root):
     rules.pack(side="top", fill="both", padx=label_padding, pady=label_padding / 2)
 
 
-def toggle_widgets(widgets):
-    for widget in widgets:
-        if widget["state"] == NORMAL:
-            widget["state"] = DISABLED
-        else:
-            widget["state"] = NORMAL
+def toggle_widgets(hints_checkbox,
+                   depth_label,
+                   depth_spinbox,
+                   eval_dropdown,
+                   eval_label,
+                   move_ord_checkbox,
+                   selected_type):
+    state_1 = DISABLED
+    state_2 = NORMAL
+    if selected_type.get() == "human":
+        state_1 = NORMAL
+        state_2 = DISABLED
+    hints_checkbox["state"] = state_1
+    depth_label["state"] = state_2
+    depth_spinbox["state"] = state_2
+    eval_dropdown["state"] = state_2
+    eval_label["state"] = state_2
+    move_ord_checkbox["state"] = state_2
 
 
 def save_game_data(root,
@@ -183,41 +195,45 @@ def display_settings_window(root,
                                           state=(NORMAL if white_type.get() == "computer" else DISABLED))
     # Player type radio buttons
     black_human_radio_btn = Radiobutton(settings_window, text="Human", padx=20, variable=black_type, value="human",
-                                        command=lambda: toggle_widgets([
+                                        command=lambda: toggle_widgets(
                                                                             black_hints_checkbox,
                                                                             black_depth_label,
                                                                             black_depth_spinbox,
                                                                             black_eval_dropdown,
                                                                             black_eval_label,
-                                                                            black_move_ord_checkbox
-                                                                        ]))
+                                                                            black_move_ord_checkbox,
+                                                                            black_type
+                                                                        ))
     black_computer_radio_btn = Radiobutton(settings_window, text="Computer", padx=20, variable=black_type,
-                                           value="computer", command=lambda: toggle_widgets([
+                                           value="computer", command=lambda: toggle_widgets(
                                                                                                 black_hints_checkbox,
                                                                                                 black_depth_label,
                                                                                                 black_depth_spinbox,
                                                                                                 black_eval_dropdown,
                                                                                                 black_eval_label,
-                                                                                                black_move_ord_checkbox
-                                                                                            ]))
+                                                                                                black_move_ord_checkbox,
+                                                                                                black_type
+                                                                                            ))
     white_human_radio_btn = Radiobutton(settings_window, text="Human", padx=20, variable=white_type, value="human",
-                                        command=lambda: toggle_widgets([
+                                        command=lambda: toggle_widgets(
                                                                             white_hints_checkbox,
                                                                             white_depth_label,
                                                                             white_depth_spinbox,
                                                                             white_eval_dropdown,
                                                                             white_eval_label,
-                                                                            white_move_ord_checkbox
-                                                                        ]))
+                                                                            white_move_ord_checkbox,
+                                                                            white_type
+                                                                        ))
     white_computer_radio_btn = Radiobutton(settings_window, text="Computer", padx=20, variable=white_type,
-                                           value="computer", command=lambda: toggle_widgets([
+                                           value="computer", command=lambda: toggle_widgets(
                                                                                                 white_hints_checkbox,
                                                                                                 white_depth_label,
                                                                                                 white_depth_spinbox,
                                                                                                 white_eval_dropdown,
                                                                                                 white_eval_label,
-                                                                                                white_move_ord_checkbox
-                                                                                            ]))
+                                                                                                white_move_ord_checkbox,
+                                                                                                white_type
+                                                                                            ))
 
     board_size_label.grid(column=1, row=1, sticky=W, ipadx=padding, ipady=padding)
     board_size_dropdown.grid(column=2, row=1, sticky=W, ipadx=padding)
