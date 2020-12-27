@@ -22,7 +22,7 @@
   * [Othello](#othello)
   * [Built With](#built-with)
 * [Getting Started](#getting-started)
-  * [Executable] (#executable)
+  * [Executable](#executable)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
   * [Running](#running)
