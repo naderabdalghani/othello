@@ -64,6 +64,8 @@ class Agent:
     def alpha_beta_pruning(self, game, depth, player, opponent, alpha=float('-inf'), beta=float('inf')):
         self.nodes_per_level[-(depth + 1)] += 1
         possible_moves = game.move_generator(player)
+        if len(possible_moves) == 0 and depth == self.depth:
+            return Move()
         if depth == 0 or game.status() != GAME_IN_PROGRESS or len(possible_moves) == 0:
             if self.evaluation_fn == "simple":
                 game.simple_evaluation_fn()
@@ -82,7 +84,7 @@ class Agent:
                         temp_game.advanced_evaluation_fn()
                     move.value = temp_game.last_move.value
                     del temp_game
-                possible_moves.sort(reverse=True)
+                possible_moves = sorted(possible_moves, key=lambda x: x.value, reverse=True)
             for move in possible_moves:
                 self.branches_evaluated += 1
                 new_game = deepcopy(game)
@@ -109,7 +111,7 @@ class Agent:
                         temp_game.advanced_evaluation_fn()
                     move.value = temp_game.last_move.value
                     del temp_game
-                possible_moves.sort()
+                possible_moves = sorted(possible_moves, key=lambda x: x.value)
             for move in possible_moves:
                 self.branches_evaluated += 1
                 new_game = deepcopy(game)
