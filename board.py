@@ -7,7 +7,7 @@ from othello import Othello
 from agent import Agent
 from constants import WHITE, BLACK, VALID_MOVE, WHITE_IMG, BLACK_IMG, NEXT_MOVE_IMG, BLACK_TURN_TEXT, WHITE_TURN_TEXT, \
     BLACK_WON_TEXT, WHITE_WON_TEXT, DRAW_TEXT, BLACK_LOADING_TEXT, WHITE_LOADING_TEXT, GAME_IN_PROGRESS, BLACK_WON, \
-    WHITE_WON, DRAW, LOG_FILE
+    WHITE_WON, DRAW, LOG_FILE, LAST_MOVE
 
 
 class Board(Frame):
@@ -209,6 +209,8 @@ class Board(Frame):
             self.moves_btns.append(move_btn)
             self.canvas.create_window(x0, y0, anchor=CENTER, window=move_btn, height=self.size - 1, width=self.size - 1,
                                       tags="move")
+        elif kind == LAST_MOVE:
+            self.canvas.create_oval(x0-5, y0-5, x0+5, y0+5, fill="red", tags="last_move", )
 
     def update_images(self):
         self.image_size = math.floor(self.size * 0.75)
@@ -225,6 +227,7 @@ class Board(Frame):
     def refresh(self):
         if self.window_destroyed:
             return
+        self.canvas.delete("last_move")
         self.canvas.delete("piece")
         self.canvas.delete("move")
         for btn in self.moves_btns:
@@ -233,6 +236,9 @@ class Board(Frame):
         white_pieces_indices = np.argwhere(self.game.state == WHITE)
         black_pieces_indices = np.argwhere(self.game.state == BLACK)
         next_move_indices = np.argwhere(self.game.state == VALID_MOVE)
+        last_move_index = None
+        if self.game.last_move is not None:
+            last_move_index = self.game.last_move
         for index in white_pieces_indices:
             self.add_piece(WHITE, index[0], index[1])
         for index in black_pieces_indices:
@@ -240,8 +246,11 @@ class Board(Frame):
         if self.current_player.agent_type == "human":
             for index in next_move_indices:
                 self.add_piece(VALID_MOVE, index[0], index[1], self.current_player.hints)
+        if last_move_index is not None:
+            self.add_piece(LAST_MOVE, last_move_index.x, last_move_index.y)
         self.canvas.tag_raise("move")
         self.canvas.tag_raise("piece")
+        self.canvas.tag_raise("last_move")
         self.canvas.tag_lower("square")
         self.canvas.update()
 
