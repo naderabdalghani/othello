@@ -70,7 +70,7 @@ class Agent:
             if self.evaluation_fn == "simple":
                 game.simple_evaluation_fn()
             else:
-                game.advanced_evaluation_fn()
+                game.advanced_evaluation_fn(player)
             return game.last_move
         if player == MAXIMIZING_PLAYER:
             max_evaluation = Move(value=float('-inf'))
@@ -81,7 +81,7 @@ class Agent:
                     if self.evaluation_fn == "simple":
                         temp_game.simple_evaluation_fn()
                     else:
-                        temp_game.advanced_evaluation_fn()
+                        temp_game.advanced_evaluation_fn(player)
                     move.value = temp_game.last_move.value
                     del temp_game
                 possible_moves = sorted(possible_moves, key=lambda x: x.value, reverse=True)
@@ -108,7 +108,7 @@ class Agent:
                     if self.evaluation_fn == "simple":
                         temp_game.simple_evaluation_fn()
                     else:
-                        temp_game.advanced_evaluation_fn()
+                        temp_game.advanced_evaluation_fn(player)
                     move.value = temp_game.last_move.value
                     del temp_game
                 possible_moves = sorted(possible_moves, key=lambda x: x.value)

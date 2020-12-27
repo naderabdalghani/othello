@@ -145,5 +145,9 @@ class Othello:
             else:
                 self.last_move.value = -100
 
-    def advanced_evaluation_fn(self):
-        pass
+    def advanced_evaluation_fn(self, player):
+        moves = self.move_generator(player)
+        number_of_moves = len(moves)
+        if player == MAXIMIZING_PLAYER:
+            self.last_move.value = number_of_moves
+        self.last_move.value = -number_of_moves
